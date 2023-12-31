@@ -39,6 +39,7 @@ class EstadoApp extends StatelessWidget {
     return MultiProvider(
        providers: [
         ChangeNotifierProvider(create: (_)=> MoviesProvider(), lazy: false,),
+        // Para recuperar datos de forma automática 
 
        ],
        child: const MyApp(),

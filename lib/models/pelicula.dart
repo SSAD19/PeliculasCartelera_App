@@ -20,6 +20,18 @@ class Pelicula {
     double? voteAverage;
     int? voteCount;
 
+    get posterFinal {
+      /*https://image.tmdb.org/t/p/w500*/
+
+    if (posterPath != null ) {
+      return 'https://image.tmdb.org/t/p/w500$posterPath' ;
+    } else {
+      return 'https://i.stack.imgur.com/GNhxO.png';
+    }
+  
+    }
+
+
     Pelicula({
         this.adult,
         this.backdropPath,

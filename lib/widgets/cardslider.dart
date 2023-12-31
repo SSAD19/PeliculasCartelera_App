@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
+
 class CardSlider extends StatelessWidget {
-  const CardSlider({super.key});
+  const CardSlider({super.key, required this.movies});
+  
+   final List<Pelicula> movies;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +28,11 @@ class CardSlider extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 15,
-              itemBuilder:(context, int index)=>_MoviePoster(),
+              itemCount: movies.length,
+              itemBuilder:(context, int i) {
+               var movie = movies[i];
+               return _MoviePoster(movie: movie);
+                }
             ),
           ),
         ], //children termina
@@ -35,6 +42,9 @@ class CardSlider extends StatelessWidget {
 }
 
 class _MoviePoster extends StatelessWidget {
+  const _MoviePoster({required this.movie});
+  final Pelicula movie;
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +59,9 @@ class _MoviePoster extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: 
-                       const FadeInImage(
-                          placeholder: AssetImage('assets/no-image.jpg'), 
-                          image: NetworkImage('https://via.placeholder.com/300x400'),
+                        FadeInImage(
+                          placeholder:const  AssetImage('assets/no-image.jpg'), 
+                          image: NetworkImage(movie.posterFinal),
                           width: 130,
                           height: 150,
                           fit: BoxFit.cover,
@@ -61,7 +71,8 @@ class _MoviePoster extends StatelessWidget {
 
                     const SizedBox(height:5),
 
-                    const Text('data', 
+                    Text(
+                    '${movie.title}', 
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
