@@ -8,6 +8,7 @@ class MoviesProvider extends ChangeNotifier {
 final String  baseApi= 'api.themoviedb.org';
 final String  keyApi= '376840e272236c4993aed5ca9c1917d2';
 final String  languageApi= 'es-ES';
+int pag=0;   
 
 List<Pelicula> enCartelera =[]; 
 List<Pelicula> masPopulares =[]; 
@@ -20,8 +21,56 @@ MoviesProvider(){
 
 }
 
+Future<String> getData (String _endPoint, int pag) async {
+ final url =
+      Uri.https(baseApi, _endPoint, {
+        'api_key': keyApi,
+        'language': languageApi,
+        'page': '$pag',
+        }
+                );
+  final response = await http.get(url);
+  return response.body; 
+ 
+}
+   getNowPlaying(String _endPoint) async{
+    final response = await getData(_endPoint, 1); 
+    final nowPlaying = NowPlaying.fromRawJson(response); 
+   enCartelera = nowPlaying.results; 
+  // el notifyListeners es para actualizar, redibujar mis widgets
+  // siempre que sea necesario  por algun cambio en mis objetos
+  notifyListeners(); 
 
-getNowPlaying(String _endPoint)  async {
+  print ('Las primeras tres pelis de mi lista son: /n ${enCartelera[0].title}, ${enCartelera[1].title}, ${enCartelera[2].title}');
+  
+}
+getMostPopular(String _endPoint) async {
+    pag++; 
+  final response = await getData(_endPoint, pag); 
+  final mostPopular = MostPopular.fromRawJson(response); 
+  masPopulares = mostPopular.results; 
+
+  print(masPopulares[0].title); 
+
+  notifyListeners(); 
+}
+
+}
+
+/*
+
+Future<String> (String endPoint) async {
+ final url =
+      Uri.https(baseApi, endPoint, {
+        'api_key': keyApi,
+        'language': languageApi,
+        'page': '1'
+        }
+                );
+  final response = await http.get(url);
+   return response.body;
+
+   getNowPlaying(String _endPoint)  async {
  print('entre en recuperacion datos');
 
    final url =
@@ -59,20 +108,6 @@ getMostPopular(String _endPoint) async {
   notifyListeners(); 
 }
 
-}
-
-/*
-
-Future<JSON> (String endPoint) async {
- final url =
-      Uri.https(baseApi, endPoint, {
-        'api_key': keyApi,
-        'language': languageApi,
-        'page': '1'
-        }
-                );
-  final response = await http.get(url);
-  return response.body; 
 }
 
 */
