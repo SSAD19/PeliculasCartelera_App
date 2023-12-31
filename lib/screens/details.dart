@@ -21,7 +21,7 @@ class DetailsScreen extends StatelessWidget {
            _PosterTitulo(),
            _Overview(),
            _Overview(),
-           CardCasting()
+           const CardCasting(),
           ],
          ),
        ),

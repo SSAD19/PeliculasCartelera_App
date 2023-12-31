@@ -1,8 +1,10 @@
+import 'package:films_adictos/provider/movieprovider.dart';
 import 'package:films_adictos/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(EstadoApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,3 +31,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class EstadoApp extends StatelessWidget {
+  const EstadoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+       providers: [
+        ChangeNotifierProvider(create: (_)=> MoviesProvider(), lazy: false,),
+
+       ],
+       child: const MyApp(),
+       );
+  }
+}
