@@ -1,4 +1,5 @@
 import 'package:films_adictos/provider/movieprovider.dart';
+import 'package:films_adictos/search/searchdelegate.dart';
 import 'package:films_adictos/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,9 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Films Adictos'),
         actions: [
           IconButton(
-          onPressed: ()=>{}, 
+          onPressed: ()=>showSearch(context: context, 
+          delegate: MovieSearch(),
+          ), 
           icon: const Icon(Icons.search))],
       ),
       
@@ -29,7 +32,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height:20),
             CardSwiper(movies: pelisProvider.enCartelera),
             const  SizedBox(height:40),
-            CardSlider(movies: pelisProvider.masPopulares),
+            CardSlider(movies: pelisProvider.masPopulares, nextPage:() =>pelisProvider.getMostPopular()),
           ],
            
         ),

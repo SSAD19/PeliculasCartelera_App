@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:films_adictos/models/models.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
@@ -12,18 +14,18 @@ int pag=0;
 
 List<Pelicula> enCartelera =[]; 
 List<Pelicula> masPopulares =[]; 
+List<Actor> actores =[]; 
 
 MoviesProvider(){
   print('movies provider inicializado');
 
-  getNowPlaying('3/movie/now_playing');
-  getMostPopular('3/movie/popular');
-
+  getNowPlaying();
+  getMostPopular();
 }
 
-Future<String> getData (String _endPoint, int pag) async {
+Future<String> getData (String endPoint, int pag) async {
  final url =
-      Uri.https(baseApi, _endPoint, {
+      Uri.https(baseApi, endPoint, {
         'api_key': keyApi,
         'language': languageApi,
         'page': '$pag',
@@ -33,81 +35,55 @@ Future<String> getData (String _endPoint, int pag) async {
   return response.body; 
  
 }
-   getNowPlaying(String _endPoint) async{
-    final response = await getData(_endPoint, 1); 
+getNowPlaying() async{
+    final response = await getData('3/movie/now_playing', 1); 
     final nowPlaying = NowPlaying.fromRawJson(response); 
    enCartelera = nowPlaying.results; 
   // el notifyListeners es para actualizar, redibujar mis widgets
   // siempre que sea necesario  por algun cambio en mis objetos
   notifyListeners(); 
 
-  print ('Las primeras tres pelis de mi lista son: /n ${enCartelera[0].title}, ${enCartelera[1].title}, ${enCartelera[2].title}');
+ // print ('Las primeras tres pelis de mi lista son: /n ${enCartelera[0].title}, ${enCartelera[1].title}, ${enCartelera[2].title}');
   
 }
-getMostPopular(String _endPoint) async {
-    pag++; 
-  final response = await getData(_endPoint, pag); 
+getMostPopular() async {
+  pag++; 
+  final response = await getData('3/movie/popular', pag); 
   final mostPopular = MostPopular.fromRawJson(response); 
-  masPopulares = mostPopular.results; 
+  masPopulares = [...masPopulares, ...mostPopular.results];
 
-  print(masPopulares[0].title); 
+
+ // print(masPopulares[0].title); 
 
   notifyListeners(); 
 }
+getCreditos (int movieId) async {
+
+final response = await getData( '3/movie/$movieId/credits3/movie/popular', 1); 
+final creditos = CreditosResponse.fromRawJson(response); 
+actores=creditos.cast;
+
+notifyListeners(); 
 
 }
 
-/*
+//otra opcion para cargar los datos donde solo se van a recuperar una vez y queden en memoria 
 
-Future<String> (String endPoint) async {
- final url =
-      Uri.https(baseApi, endPoint, {
-        'api_key': keyApi,
-        'language': languageApi,
-        'page': '1'
-        }
-                );
-  final response = await http.get(url);
-   return response.body;
+Map<int, List<Actor>> castingPeli ={};
 
-   getNowPlaying(String _endPoint)  async {
- print('entre en recuperacion datos');
+Future<List<Actor>>  getCasting (int movieId) async {
 
-   final url =
-      Uri.https(baseApi, _endPoint, {
-        'api_key': keyApi,
-        'language': languageApi,
-        'page': '1'
-        }
-                );
-  final response = await http.get(url);
-  final nowPlaying = NowPlaying.fromRawJson(response.body); 
-  enCartelera = nowPlaying.results; 
-
-  // el notifyListeners es para actualizar, redibujar mis widgets
-  // siempre que sea necesario  por algun cambio en mis objetos
-  notifyListeners(); 
-
-  print ('Las primeras tres pelis de mi lista son: /n ${enCartelera[0].title}, ${enCartelera[1].title}, ${enCartelera[2].title}');
+if (castingPeli.containsKey(movieId)) return castingPeli[movieId]!;
   
-}
+final response = await getData( '3/movie/$movieId/credits', 1); 
+final creditos = CreditosResponse.fromRawJson(response); 
+castingPeli[movieId]=creditos.cast;
 
-getMostPopular(String _endPoint) async {
-  print(' recuperando mas populares'); 
- final url =
-      Uri.https(baseApi, _endPoint, {
-        'api_key': keyApi,
-        'language': languageApi,
-        'page': '1'
-        }
-                );
-  final response = await http.get(url);
-  final mostPopular = MostPopular.fromRawJson(response.body); 
-  masPopulares = mostPopular.results; 
-  print(masPopulares[0].title); 
-  notifyListeners(); 
-}
+return creditos.cast; 
 
 }
 
-*/
+// funcionalidad para el search -  creacion del delegate
+
+
+}

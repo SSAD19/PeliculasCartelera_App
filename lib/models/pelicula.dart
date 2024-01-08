@@ -14,7 +14,7 @@ class Pelicula {
     String? overview;
     double? popularity;
     String? posterPath;
-    DateTime? releaseDate;
+    String? releaseDate;
     String? title;
     bool? video;
     double? voteAverage;
@@ -29,6 +29,14 @@ class Pelicula {
       return 'https://i.stack.imgur.com/GNhxO.png';
     }
   
+    }
+
+    get fullBackdropPath {
+      if ( backdropPath != null ) {
+        return 'https://image.tmdb.org/t/p/w500$backdropPath';
+      } else {
+        return 'https://i.stack.imgur.com/GNhxO.png';
+      }
     }
 
 
@@ -63,7 +71,7 @@ class Pelicula {
         overview: json["overview"],
         popularity: json["popularity"]?.toDouble(),
         posterPath: json["poster_path"],
-        releaseDate: DateTime.parse(json["release_date"]),
+        releaseDate: json["release_date"],
         title: json["title"],
         video: json["video"],
         voteAverage: json["vote_average"]?.toDouble(),

@@ -1,26 +1,60 @@
-import 'package:flutter/material.dart';
+import 'package:films_adictos/models/models.dart';
+import 'package:films_adictos/provider/movieprovider.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class CardCasting extends StatelessWidget {
-  const CardCasting({super.key});
+  const CardCasting({super.key, required this.idMovie});
+
+  final int idMovie; 
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    final moviesProvider = Provider.of<MoviesProvider>(context, listen: false);
+    return FutureBuilder(
+      future: moviesProvider.getCasting(idMovie)   , 
+      builder: (context, AsyncSnapshot<List<Actor>> snapshot) 
+      {
+
+      if(!snapshot.hasData)  {
+      return  Container(
+      constraints: const BoxConstraints(maxWidth:150),
+      height: 180, 
+      child:const CupertinoActivityIndicator(
+      radius: 60.0,
+      ),
+      );
+      }
+      
+      final List<Actor> actores = snapshot.data!;
+
+      return  Container(
       width: double.infinity,
-      height: 180,
+      height: 230,
       margin: const EdgeInsets.only(bottom: 30),
       child: 
             ListView.builder(
-              itemCount:10,
+              itemCount:actores.length,
               scrollDirection: Axis.horizontal,
-              itemBuilder: (_, int index)=> _CardInternal()
+              itemBuilder: (_, int i) =>  _CardInternal(actor:actores[i]),
+              
         ),
       ); 
+ 
+      
+      });
+
+
+
   }
 }
 
 //tarjeta de foto y nombre actor 
 class _CardInternal extends StatelessWidget {
+
+  final Actor actor;
+
+  const _CardInternal({required this.actor});
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +62,22 @@ class _CardInternal extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
         width: 110,
-        height: 170,
+        height: 280,
         child:  Column (
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: 
-              const FadeInImage(
-                placeholder: AssetImage('assets/no-image.jpg'), 
-                image: NetworkImage('https://via.placeholder.com/300x400'),
+               FadeInImage(
+                placeholder: const AssetImage('assets/no-image.jpg'), 
+                image: NetworkImage(actor.posterFinalAct),
                 fit: BoxFit.cover,
                 ),),
-           
-           Text('actor.nombre', 
+            const SizedBox( height: 5 ),
+            Text('${actor.name}', 
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,)
+            maxLines: 2,
+            textAlign: TextAlign.center,)
           ],
         ),
       ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(EstadoApp());
+  runApp(const EstadoApp());
 }
 
 class MyApp extends StatelessWidget {

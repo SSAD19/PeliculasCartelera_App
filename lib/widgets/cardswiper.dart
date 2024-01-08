@@ -27,7 +27,7 @@ class CardSwiper extends StatelessWidget {
         itemBuilder: (context, i) {
           var movie =movies[i]; 
           return GestureDetector(
-            onTap: ()=> Navigator.pushNamed(context, 'Details', arguments: 'pelicula'),
+            onTap: ()=> Navigator.pushNamed(context, 'Details', arguments: movie),
             child: Padding(
               padding: const EdgeInsets.only(top: 20),
               child: ClipRRect(
