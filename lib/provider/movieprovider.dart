@@ -84,6 +84,19 @@ return creditos.cast;
 }
 
 // funcionalidad para el search -  creacion del delegate
+Future<List<Pelicula>> buscarPeli (String query) async {
+final url =
+      Uri.https(baseApi,'3/search/movie' , {
+        'api_key': keyApi,
+        'language': languageApi,
+        'page': '$pag',
+        'query': query,
+        } );
 
+        
+  final response = await http.get(url);
+  final searchMovie = SearchMovie.fromRawJson(response.body) ; 
+  return searchMovie.results; 
+}
 
 }
