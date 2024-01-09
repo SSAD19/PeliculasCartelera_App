@@ -60,44 +60,73 @@ class MovieSearch extends SearchDelegate{
       return _emptyData();
      }
      
+
     final moviesProvider = Provider.of<MoviesProvider>(context);
-     
+     moviesProvider.getSuggestionQuery(query);
+     //uso del debouncer y stream  
+    // el stream  debe estar en mi provider
+     return StreamBuilder(
+    stream: moviesProvider.suggestionStream, 
+    builder:(_,AsyncSnapshot<List<Pelicula>> snapshot) {
+        if (!snapshot.hasData) return _emptyData();
+
+        final pelis = snapshot.data!;
+        
+        return ListView.builder(
+          itemCount: pelis.length,
+          itemBuilder: (_, int i) => _listaSearch(movie: pelis[i],),
+          );
+      },
+      );
+
+
+     /* con funcionalidad pero sin optimizacion del uso de datos 
      return FutureBuilder(
       future: moviesProvider.buscarPeli(query), 
       builder:(_,AsyncSnapshot<List<Pelicula>> snapshot) {
         if (!snapshot.hasData) return _emptyData();
 
         final pelis = snapshot.data!;
-
+        
         return ListView.builder(
           itemCount: pelis.length,
-          itemBuilder: (_, int i) => _listaSearch(peli: pelis[i],),
+          itemBuilder: (_, int i) => _listaSearch(movie: pelis[i],),
           );
       },
-      );
+      );*/
   }
 
 }
 
 // ignore: must_be_immutable
 class _listaSearch extends StatelessWidget {
-  const _listaSearch({required this.peli});
-   final Pelicula peli; 
-
+  const _listaSearch({required this.movie});
+   
+   final Pelicula movie; 
+  
   @override
   Widget build(BuildContext context) {
+
+    movie.heroId='search-${movie.id}';
+
     return ListTile(
-      leading: FadeInImage(
-      image:NetworkImage(peli.posterFinal),
-      placeholder:const AssetImage('assets/no-image.jpg'),
-      width: 100,
-      fit: BoxFit.contain    
+      leading: Hero(
+        tag: movie.heroId!,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: FadeInImage(
+          image:NetworkImage(movie.posterFinal),
+          placeholder:const AssetImage('assets/no-image.jpg'),
+          width: 100,
+          fit: BoxFit.contain    
+          ),
+        ),
       ),
-      title: Text('${peli.title}', 
+      title: Text('${movie.title}', 
       style: const TextStyle(fontSize: 16),
       overflow: TextOverflow.ellipsis,
       maxLines: 2,),
-    onTap: () =>Navigator.pushNamed(context, 'Details', arguments: peli) 
+    onTap: () =>Navigator.pushNamed(context, 'Details', arguments: movie) 
     );
   }
 }

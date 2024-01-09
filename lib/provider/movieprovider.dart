@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
+import 'package:films_adictos/helpers/debouncer.dart';
 import 'package:films_adictos/models/models.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
@@ -83,6 +86,8 @@ return creditos.cast;
 
 }
 
+
+
 // funcionalidad para el search -  creacion del delegate
 Future<List<Pelicula>> buscarPeli (String query) async {
 final url =
@@ -97,6 +102,27 @@ final url =
   final response = await http.get(url);
   final searchMovie = SearchMovie.fromRawJson(response.body) ; 
   return searchMovie.results; 
+}
+
+//busqueda de pelis con streams
+
+final Debouncer debouncer = Debouncer(duration: Duration(milliseconds: 500)
+);
+
+final StreamController<List<Pelicula>> _suggestionSC = StreamController.broadcast();
+Stream<List<Pelicula>> get suggestionStream => _suggestionSC.stream;
+
+void getSuggestionQuery (String query){
+   debouncer.value='';
+   debouncer.onValue= (value) async {
+      final results = await buscarPeli(value);
+      _suggestionSC.add(results);
+   };
+
+   final timer =Timer.periodic(Duration(milliseconds: 300), (_) { 
+    debouncer.value=query;
+   });
+  Future.delayed(Duration( milliseconds: 301)).then(( _ ) => timer.cancel());
 }
 
 }

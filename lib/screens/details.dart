@@ -17,7 +17,7 @@ class DetailsScreen extends StatelessWidget {
       slivers: [
         _CustomAppBar(peli:movie),
         SliverList(delegate: SliverChildListDelegate([
-           _PosterTitulo(peli:movie),
+           _PosterTitulo(movie:movie),
            _Overview(peli:movie),
            CardCasting(idMovie: movie.id,),
           ],
@@ -66,9 +66,9 @@ class _CustomAppBar extends StatelessWidget {
 
 class _PosterTitulo extends StatelessWidget {
 
-final Pelicula peli;
+final Pelicula movie;
 
-  const _PosterTitulo({required this.peli});
+  const _PosterTitulo({required this.movie});
   @override
   Widget build(BuildContext context) {
 
@@ -80,16 +80,19 @@ final Pelicula peli;
       padding:const  EdgeInsets.symmetric(horizontal:20),
       child:  Row(
         children: [
-          ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child:FadeInImage(
-          height: 150,
-          width: 100,
-          placeholder:const  AssetImage('assets/no-image.jpg'),
-          image: NetworkImage(peli.posterFinal),
-          fit: BoxFit.cover,
-        ), 
-        ),
+          Hero(
+            tag: movie.heroId!,
+            child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child:FadeInImage(
+            height: 150,
+            width: 100,
+            placeholder:const  AssetImage('assets/no-image.jpg'),
+            image: NetworkImage(movie.posterFinal),
+            fit: BoxFit.cover,
+                    ), 
+                    ),
+          ),
           const SizedBox(width: 20),
 
          ConstrainedBox( 
@@ -99,12 +102,12 @@ final Pelicula peli;
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${peli.title}',
+              Text('${movie.title}',
               style: tema.titleLarge,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,),
           
-              Text( '${peli.originalTitle}',
+              Text( '${movie.originalTitle}',
               style: tema.titleMedium,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,),
@@ -113,7 +116,7 @@ final Pelicula peli;
                 children: [
                  const Icon(Icons.star_border_outlined, size: 20, color: Colors.grey,),
                  const SizedBox(width: 5),
-                  Text('${peli.voteAverage}')
+                  Text('${movie.voteAverage}')
                 ],
               )
               ],

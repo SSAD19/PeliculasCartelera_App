@@ -20,6 +20,8 @@ class Pelicula {
     double? voteAverage;
     int? voteCount;
 
+    String? heroId;
+
     get posterFinal {
       /*https://image.tmdb.org/t/p/w500*/
 
